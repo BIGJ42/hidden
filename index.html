@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hiddæn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --nav-bg-color: rgba(30, 30, 30, 0.8);
+            --card-bg-color: rgba(255, 255, 255, 0.07);
+            --card-hover-bg-color: rgba(255, 255, 255, 0.15);
+            --input-bg-color: #2a2a2e;
+            --accent-color: #007bff;
+            --accent-rgb: 0, 123, 255;
+            --border-color: #333;
+            --status-online: #28a745;
+            --status-offline: #dc3545;
+            --status-unknown: #6c757d;
+            --favorite-color: #ffc107;
+        }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding-top: 60px; transition: background-color 0.3s ease, color 0.3s ease; }
+        nav { position: fixed; top: 0; left: 0; right: 0; height: 60px; background: var(--nav-bg-color); display: flex; justify-content: center; align-items: center; padding: 0 20px; backdrop-filter: blur(10px); z-index: 1000; border-bottom: 1px solid var(--border-color); }
+        .nav-brand { font-weight: 600; font-size: 1.5em; color: var(--accent-color); user-select: none; cursor: pointer; transition: color 0.3s ease, transform 0.2s ease; }
+        .nav-brand:hover { transform: scale(1.05); }
+        main { display: block; padding: 20px 40px; max-width: 1600px; margin: 0 auto; animation: fadeIn 0.5s ease; }
+        .header-container { text-align: center; margin-bottom: 20px; }
+        .header-container h1 { margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .search-container { position: relative; width: 100%; max-width: 500px; margin: 20px auto 30px auto; }
+        .search-container .fa-search { position: absolute; top: 15px; left: 20px; color: var(--text-color); opacity: 0.5; z-index: 1; }
+        .search-input { width: 100%; padding: 12px 20px 12px 50px; border-radius: 25px; font-size: 16px; background-color: var(--input-bg-color); border: 1px solid var(--border-color); color: var(--text-color); transition: all 0.3s ease; }
+        .search-input:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.3); }
+        
+        .filter-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        .filter-btn { background-color: var(--input-bg-color); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 15px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .filter-btn:hover { background-color: var(--card-hover-bg-color); border-color: var(--accent-color); }
+        .filter-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
+        .filter-btn .fa-star { color: var(--favorite-color); }
+
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .item-card { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; text-decoration: none; color: var(--text-color); transition: all 0.3s ease; display: flex; flex-direction: column; text-align: center; opacity: 0; animation: fadeUp 0.5s ease forwards; position: relative; }
+        .item-card:hover { transform: translateY(-5px); border-color: var(--accent-color); background: var(--card-hover-bg-color); }
+        
+        .card-content { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; text-decoration: none; color: var(--text-color); }
+        .card-content i { font-size: 2em; margin-bottom: 10px; color: var(--accent-color); transition: color 0.3s; }
+        .card-content .title { font-weight: 600; font-size: 1.1em; margin-bottom: 5px; }
+        .card-content .url { font-size: 0.9em; opacity: 0.7; word-break: break-all; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border-color); }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background-color: var(--status-unknown); transition: background-color 0.5s ease; }
+        .status-dot.online { background-color: var(--status-online); }
+        .status-dot.offline { background-color: var(--status-offline); }
+        .favorite-btn { font-size: 1.2rem; cursor: pointer; color: var(--text-color); opacity: 0.5; transition: color 0.2s, opacity 0.2s, transform 0.2s; }
+        .favorite-btn:hover { opacity: 1; transform: scale(1.1); }
+        .favorite-btn.favorited { color: var(--favorite-color); opacity: 1; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <span class="nav-brand" id="brand-title">hiddæn</span>
+    </nav>
+
+    <main>
+        <div class="header-container">
+            <h1>The Ultimate Unblocker & Proxy Collection</h1>
+            <div class="filter-bar" id="filterBar"></div>
+        </div>
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" class="search-input" onkeyup="renderGrid()" placeholder="Search sites...">
+        </div>
+        <div class="item-grid" id="sitesGrid"></div>
+    </main>
+
+<script>
+    const db = {
+        sites: [
+            { name: "4everproxy", url: "4everproxy.com", category: "Public Proxy" },
+            { name: "AdGuard Home", url: "adguard.com/adguard-home.html", category: "DNS" },
+            { name: "AirVPN", url: "airvpn.org", category: "VPN" },
+            { name: "Algo VPN", url: "github.com/trailofbits/algo", category: "VPN" },
+            { name: "AmneziaVPN", url: "amnezia.org", category: "VPN" },
+            { name: "AnonyMizer", url: "www.anonymizer.com", category: "Public Proxy" },
+            { name: "AnonyMouse", url: "anonymouse.org", category: "Public Proxy" },
+            { name: "Ask.com", url: "www.ask.com", category: "Search Engine" },
+            { name: "Awebproxy", url: "www.awebproxy.com", category: "Public Proxy" },
+            { name: "AzireVPN", url: "www.azirevpn.com", category: "VPN" },
+            { name: "Betternet", url: "www.betternet.co", category: "VPN" },
+            { name: "BIND9", url: "www.isc.org/bind", category: "DNS" },
+            { name: "Blazing SEO", url: "blazingseollc.com/proxy", category: "Paid Proxy" },
+            { name: "BlockAway", url: "www.blockaway.net", category: "Public Proxy" },
+            { name: "Brave Search", url: "search.brave.com", category: "Privacy Tool" },
+            { name: "BrightData", url: "brightdata.com", category: "Paid Proxy" },
+            { name: "Caddy Server", url: "caddyserver.com", category: "Software" },
+            { name: "CGIProxy", url: "www.jmarshall.com/tools/cgiproxy", category: "Software" },
+            { name: "Cloudflare 1.1.1.1", url: "1.1.1.1", category: "DNS" },
+            { name: "Control D", url: "controld.com", category: "DNS" },
+            { name: "CoreDNS", url: "coredns.io", category: "DNS" },
+            { name: "CroxyProxy", url: "www.croxyproxy.com", category: "Public Proxy" },
+            { name: "Dante", url: "www.inet.no/dante", category: "Software" },
+            { name: "Disconnect Search", url: "search.disconnect.me", category: "Privacy Tool" },
+            { name: "DNSCrypt", url: "dnscrypt.info", category: "DNS" },
+            { name: "dnscrypt-proxy", url: "github.com/DNSCrypt/dnscrypt-proxy", category: "Software" },
+            { name: "DNSdist", url: "dnsdist.org", category: "Software" },
+            { name: "dnsproxy", url: "github.com/AdguardTeam/dnsproxy", category: "Software" },
+            { name: "Dogpile", url: "www.dogpile.com", category: "Search Engine" },
+            { name: "DuckDuckGo", url: "duckduckgo.com", category: "Privacy Tool" },
+            { name: "Ecosia", url: "www.ecosia.org", category: "Search Engine" },
+            { name: "FilterBypass", url: "filterbypass.me", category: "Public Proxy" },
+            { name: "Freenet", url: "freenetproject.org", category: "P2P Network" },
+            { name: "Freegate", url: "www.freegate.org", category: "VPN" },
+            { name: "Freelan", url: "www.freelan.org", category: "VPN" },
+            { name: "FreeProxy.win", url: "freeproxy.win", category: "Public Proxy" },
+            { name: "GenMirror", url: "genmirror.com", category: "Public Proxy" },
+            { name: "Gibiru", url: "gibiru.com", category: "Privacy Tool" },
+            { name: "Gigablast", url: "gigablast.com", category: "Search Engine" },
+            { name: "GlassWire", url: "www.glasswire.com", category: "Software" },
+            { name: "Glype", url: "www.glype.com", category: "Software" },
+            { name: "HAProxy", url: "www.haproxy.org", category: "Software" },
+            { name: "Headscale", url: "github.com/juanfont/headscale", category: "VPN" },
+            { name: "Hide.me Proxy", url: "hide.me/en/proxy", category: "Public Proxy" },
+            { name: "HideMyAss", url: "www.hidemyass.com", category: "Public Proxy" },
+            { name: "Hidester", url: "hidester.com/proxy", category: "Public Proxy" },
+            { name: "Hotspot Shield", url: "www.hotspotshield.com", category: "VPN" },
+            { name: "I2P", url: "geti2p.net", category: "P2P Network" },
+            { name: "Info.com", url: "www.info.com", category: "Search Engine" },
+            { name: "IPRoyal", url: "iproyal.com", category: "Paid Proxy" },
+            { name: "IVPN", url: "www.ivpn.net", category: "VPN" },
+            { name: "Knot Resolver", url: "www.knot-resolver.cz", category: "DNS" },
+            { name: "kProxy", url: "www.kproxy.com", category: "Public Proxy" },
+            { name: "Lantern", url: "getlantern.org", category: "VPN" },
+            { name: "Libreswan", url: "libreswan.org", category: "VPN" },
+            { name: "Little Snitch", url: "www.obdev.at/products/littlesnitch", category: "Software" },
+            { name: "LuLu", url: "objective-see.org/products/lulu.html", category: "Software" },
+            { name: "Mail.com", url: "www.mail.com", category: "Privacy Tool" },
+            { name: "Mailfence", url: "mailfence.com", category: "Privacy Tool" },
+            { name: "Megaproxy", url: "www.megaproxy.com", category: "Public Proxy" },
+            { name: "MetaGer", url: "metager.org", category: "Privacy Tool" },
+            { name: "Mojeek", url: "www.mojeek.com", category: "Search Engine" },
+            { name: "Mullvad VPN", url: "mullvad.net", category: "VPN" },
+            { name: "Nebula", url: "github.com/slackhq/nebula", category: "VPN" },
+            { name: "Netbird", url: "netbird.io", category: "VPN" },
+            { name: "NetNut", url: "netnut.io", category: "Paid Proxy" },
+            { name: "New-Proxy", url: "new-proxy.com", category: "Public Proxy" },
+            { name: "NextDNS", url: "nextdns.io", category: "DNS" },
+            { name: "Nginx Proxy Manager", url: "nginxproxymanager.com", category: "Software" },
+            { name: "Njalla", url: "njalla.no", category: "Privacy Tool" },
+            { name: "OpenNIC", url: "www.opennic.org", "category": "DNS" },
+            { name: "OpenVPN", url: "openvpn.net", "category": "VPN" },
+            { name: "Openswan", url: "www.openswan.org", "category": "VPN" },
+            { name: "Orbot", url: "orbot.app", "category": "P2P Network" },
+            { name: "Outline VPN", url: "getoutline.org", "category": "VPN" },
+            { name: "Oxylabs", url: "oxylabs.io", "category": "Paid Proxy" },
+            { name: "PHProxy", url: "www.phproxy.info", "category": "Software" },
+            { name: "Pi-hole", url: "pi-hole.net", "category": "DNS" },
+            { name: "Polipo", url: "www.pps.univ-paris-diderot.fr/~jch/software/polipo/", "category": "Software" },
+            { name: "Portmaster", url: "safing.io", "category": "Software" },
+            { name: "Posteo", url: "posteo.de", "category": "Privacy Tool" },
+            { name: "PowerDNS", url: "www.powerdns.com", "category": "DNS" },
+            { name: "Private.sh", url: "private.sh", "category": "Privacy Tool" },
+            { name: "Privoxy", url: "www.privoxy.org", "category": "Software" },
+            { name: "ProtonMail", url: "proton.me/mail", "category": "Privacy Tool" },
+            { name: "ProtonVPN", url: "protonvpn.com", "category": "VPN" },
+            { name: "Proxy-Server.pro", url: "proxy-server.pro", "category": "Public Proxy" },
+            { name: "Proxy.fyi", url: "proxy.fyi", "category": "Public Proxy" },
+            { name: "Proxychains-ng", url: "github.com/rofl0r/proxychains-ng", "category": "Software" },
+            { name: "ProxFree", url: "www.proxfree.com", "category": "Public Proxy" },
+            { name: "Proxy of Proxy", url: "proxyofproxy.com", "category": "Public Proxy" },
+            { name: "Proxysite.com", url: "www.proxysite.com", "category": "Public Proxy" },
+            { name: "Psiphon", url: "psiphon.ca", "category": "VPN" },
+            { name: "Qwant", url: "www.qwant.com", "category": "Privacy Tool" },
+            { name: "Quad9", url: "quad9.net", "category": "DNS" },
+            { name: "Searx", url: "searx.space", "category": "Privacy Tool" },
+            { name: "Shadowsocks", url: "shadowsocks.org", "category": "Software" },
+            { name: "Simple DNSCrypt", url: "simplednscrypt.org", "category": "DNS" },
+            { name: "Smartproxy", url: "smartproxy.com", "category": "Paid Proxy" },
+            { name: "SoftEther VPN", url: "www.softether.org", "category": "VPN" },
+            { name: "Squid Cache", url: "www.squid-cache.org", "category": "Software" },
+            { name: "Startpage", url: "www.startpage.com", "category": "Privacy Tool" },
+            { name: "Stealthy", url: "www.stealthy.co", "category": "Public Proxy" },
+            { name: "Streisand", url: "github.com/StreisandEffect/streisand", "category": "VPN" },
+            { name: "strongSwan", url: "www.strongswan.org", "category": "VPN" },
+            { name: "Swisscows", url: "swisscows.com", "category": "Privacy Tool" },
+            { name: "Tailscale", url: "tailscale.com", "category": "VPN" },
+            { name: "Technitium DNS", url: "technitium.com/dns", "category": "DNS" },
+            { name: "The Onion Router", url: "www.torproject.org", "category": "P2P Network" },
+            { name: "Tinc VPN", url: "www.tinc-vpn.org", "category": "VPN" },
+            { name: "Tinyproxy", url: "tinyproxy.github.io", "category": "Software" },
+            { name: "Traefik", url: "traefik.io", "category": "Software" },
+            { name: "TunnelBear", url: "www.tunnelbear.com", "category": "VPN" },
+            { name: "TurboHide", url: "www.turbohide.org", "category": "Public Proxy" },
+            { name: "Tutanota", url: "tutanota.com", "category": "Privacy Tool" },
+            { name: "Ultrasurf", url: "ultrasurf.us", "category": "VPN" },
+            { name: "Unbound", url: "unbound.net", "category": "DNS" },
+            { name: "Unblock.red", url: "unblock.red", "category": "Public Proxy" },
+            { name: "V2Ray", url: "www.v2ray.com", "category": "Software" },
+            { name: "Varnish Cache", url: "varnish-cache.org", "category": "Software" },
+            { name: "VPNBook", url: "www.vpnbook.com/webproxy", "category": "Public Proxy" },
+            { name: "Whoer Proxy", url: "whoer.net/webproxy", "category": "Public Proxy" },
+            { name: "Windscribe", url: "windscribe.com", "category": "VPN" },
+            { name: "WireGuard", url: "www.wireguard.com", "category": "VPN" },
+            { name: "Yacy", url: "yacy.net", "category": "P2P Network" },
+            { name: "YogaDNS", url: "yogadns.com", "category": "DNS" },
+            { name: "ZeroTier", url: "www.zerotier.com", "category": "VPN" },
+            { name: "3proxy", url: "3proxy.ru", "category": "Software" }
+        ].sort((a, b) => a.name.localeCompare(b.name)),
+        colors: [
+            { hex: '#007bff' }, { hex: '#6a00f4' }, { hex: '#28a745' }, { hex: '#dc3545' },
+            { hex: '#fd7e14' }, { hex: '#20c997' }, { hex: '#e83e8c' }, { hex: '#ffc107' }
+        ]
+    };
+
+    const root = document.documentElement;
+    let currentColorIndex = 0;
+    let favorites = [];
+    let activeCategory = 'All';
+    let showFavoritesOnly = false;
+
+    // --- Core Functions ---
+
+    function hexToRgb(hex) {
+        let result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : null;
+    }
+
+    function changeAccentColor(hex) {
+        const rgb = hexToRgb(hex);
+        if (!rgb) return;
+        root.style.setProperty('--accent-color', hex);
+        root.style.setProperty('--accent-rgb', rgb);
+        localStorage.setItem('accentColor', hex);
+    }
+
+    function cycleColor() {
+        currentColorIndex = (currentColorIndex + 1) % db.colors.length;
+        const newColor = db.colors[currentColorIndex].hex;
+        changeAccentColor(newColor);
+    }
+
+    // --- Data & State Management ---
+
+    function loadState() {
+        const savedColor = localStorage.getItem('accentColor');
+        if (savedColor) {
+            currentColorIndex = db.colors.findIndex(c => c.hex === savedColor);
+            if(currentColorIndex === -1) currentColorIndex = 0;
+            changeAccentColor(savedColor);
+        } else {
+            changeAccentColor(db.colors[0].hex);
+        }
+
+        favorites = JSON.parse(localStorage.getItem('hiddæn-favorites')) || [];
+        showFavoritesOnly = JSON.parse(localStorage.getItem('hiddæn-showFavorites')) || false;
+    }
+
+    function toggleFavorite(url) {
+        const index = favorites.indexOf(url);
+        if (index > -1) {
+            favorites.splice(index, 1);
+        } else {
+            favorites.push(url);
+        }
+        localStorage.setItem('hiddæn-favorites', JSON.stringify(favorites));
+        renderGrid();
+    }
+
+    // --- Rendering & UI ---
+
+    function createFilterBar() {
+        const container = document.getElementById('filterBar');
+        const categories = ['All', ...new Set(db.sites.map(s => s.category).sort())];
+        
+        // Favorites Button
+        const favBtn = document.createElement('button');
+        favBtn.className = 'filter-btn';
+        favBtn.innerHTML = '<i class="fas fa-star"></i> Show Favorites';
+        favBtn.id = 'fav-filter-btn';
+        favBtn.onclick = () => {
+            showFavoritesOnly = !showFavoritesOnly;
+            localStorage.setItem('hiddæn-showFavorites', JSON.stringify(showFavoritesOnly));
+            activeCategory = 'All'; // Reset category filter when toggling favorites
+            renderGrid();
+        };
+        container.appendChild(favBtn);
+        
+        // Category Buttons
+        categories.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.textContent = cat;
+            btn.dataset.category = cat;
+            btn.onclick = () => {
+                activeCategory = cat;
+                showFavoritesOnly = false; // Turn off favorite filter when a category is clicked
+                localStorage.setItem('hiddæn-showFavorites', 'false');
+                renderGrid();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function updateActiveFilters() {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            const category = btn.dataset.category;
+            const isFavBtn = btn.id === 'fav-filter-btn';
+
+            if (isFavBtn) {
+                btn.classList.toggle('active', showFavoritesOnly);
+            } else {
+                btn.classList.toggle('active', !showFavoritesOnly && category === activeCategory);
+            }
+        });
+    }
+
+    function renderGrid() {
+        const grid = document.getElementById('sitesGrid');
+        const searchFilter = document.getElementById('searchInput').value.toUpperCase();
+        grid.innerHTML = '';
+
+        const filteredSites = db.sites.filter(site => {
+            const inCategory = activeCategory === 'All' || site.category === activeCategory;
+            const matchesSearch = site.name.toUpperCase().includes(searchFilter) || site.url.toUpperCase().includes(searchFilter);
+            const isFavorite = favorites.includes(site.url);
+
+            if (showFavoritesOnly) {
+                return isFavorite && matchesSearch;
+            }
+            return inCategory && matchesSearch;
+        });
+
+        filteredSites.forEach((site, index) => {
+            const isFavorited = favorites.includes(site.url);
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.style.animationDelay = `${index * 0.015}s`;
+            card.dataset.url = site.url;
+
+            card.innerHTML = `
+                <a href="http://${site.url}" class="card-content" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-globe-americas"></i>
+                    <div class="title">${site.name}</div>
+                    <div class="url">${site.url}</div>
+                </a>
+                <div class="card-footer">
+                    <div class="status-dot" title="Status Unknown"></div>
+                    <i class="favorite-btn fas fa-star ${isFavorited ? 'favorited' : ''}" title="Add to favorites"></i>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+        
+        addCardEventListeners();
+        checkVisibleSiteStatus();
+        updateActiveFilters();
+    }
+    
+    function addCardEventListeners() {
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const card = btn.closest('.item-card');
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                toggleFavorite(card.dataset.url);
+            };
+        });
+    }
+
+    // --- Site Status Checker ---
+    
+    function checkSiteStatus(url) {
+        const dot = document.querySelector(`.item-card[data-url="${url}"] .status-dot`);
+        if (!dot || dot.classList.contains('online') || dot.classList.contains('offline')) {
+            return; // Already checked or not visible
+        }
+
+        // Use a no-cors request as a simple way to check if a server is reachable.
+        // It won't return content, but a successful or failed request is enough for a status check.
+        fetch(`https://${url}`, { mode: 'no-cors', cache: 'no-store' })
+            .then(() => {
+                dot.classList.add('online');
+                dot.title = "Online";
+            })
+            .catch(() => {
+                dot.classList.add('offline');
+                dot.title = "Offline";
+            });
+    }
+
+    // Use Intersection Observer for performance: only check status for sites currently in view.
+    let observer;
+    function checkVisibleSiteStatus() {
+        if(observer) observer.disconnect();
+        
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    checkSiteStatus(card.dataset.url);
+                    observer.unobserve(card); // Check only once per page load
+                }
+            });
+        }, { rootMargin: "100px" });
+
+        document.querySelectorAll('.item-card').forEach(card => observer.observe(card));
+    }
+
+
+    // --- Initialization ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('brand-title').addEventListener('click', cycleColor);
+        
+        loadState();
+        createFilterBar();
+        renderGrid();
+    });
+
+</script>
+</body>
+</html>
